@@ -1,2 +1,2 @@
-# Expense_app
+# Pockit
 Mobile development Project
