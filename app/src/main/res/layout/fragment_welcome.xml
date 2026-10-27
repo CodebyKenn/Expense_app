@@ -10,11 +10,14 @@
 
     <ImageView
         android:id="@+id/ivLogo"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="start"
+        android:background="@drawable/bg_logo_circle"
         android:contentDescription="Pockit logo"
-        android:src="@mipmap/ic_launcher" />
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo_pockit" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,7 +46,7 @@
         android:layout_weight="1"
         android:contentDescription="Welcome illustration"
         android:scaleType="fitCenter"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/welcome_illustration" />
 
     <Button
         android:id="@+id/btnCreateAccount"
