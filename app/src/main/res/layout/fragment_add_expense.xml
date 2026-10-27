@@ -5,15 +5,20 @@
     android:layout_height="match_parent"
     android:background="#F8F1DC"
     android:fillViewport="true"
+    android:clipToPadding="false"
+    android:paddingBottom="20dp"
     tools:context=".ui.expenses.AddExpenseFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="20dp">
 
-        <!-- Header -->
+        <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,63 +26,60 @@
             android:orientation="horizontal"
             android:layout_marginBottom="22dp">
 
-            <TextView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:gravity="center"
-                android:text="@string/profile_dot"
-                android:textColor="#4E285E"
-                android:textSize="30sp"
-                android:contentDescription="@string/user_profile_description" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_pockit"
+                android:contentDescription="Pockit"
+                android:scaleType="fitCenter" />
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/app_name"
-                android:textColor="#4E285E"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <Button
                 android:id="@+id/buttonCancel"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:backgroundTint="#F8F1DC"
+                android:layout_height="40dp"
+                android:gravity="center"
                 android:text="@string/cancel"
-                android:textColor="#4E285E"
-                android:textSize="12sp" />
+                android:textColor="#7651A8"
+                android:textSize="13sp"
+                android:paddingStart="150dp"
+                android:paddingEnd="5dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/buttonSaveExpense"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:backgroundTint="#F8F1DC"
+                android:layout_height="40dp"
+                android:gravity="center"
                 android:text="@string/save_expense"
                 android:textColor="#4E285E"
-                android:textSize="12sp" />
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingStart="50dp"
+                android:paddingEnd="2dp" />
+
         </LinearLayout>
 
-        <!-- Transaction type -->
+        <!-- TRANSACTION TYPE -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="54dp"
             android:background="@drawable/bg_round_purple"
             android:orientation="horizontal"
             android:padding="5dp"
             android:layout_marginBottom="22dp">
 
+            <!-- INCOME - SELECTED -->
             <Button
                 android:id="@+id/buttonIncome"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:backgroundTint="#E4D1F1"
+                android:backgroundTint="#876C94"
                 android:text="@string/transaction_income"
                 android:textAllCaps="false"
-                android:textColor="#4E285E"
-                android:textSize="14sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
+            <!-- EXPENSE - UNSELECTED -->
             <Button
                 android:id="@+id/buttonExpense"
                 android:layout_width="0dp"
@@ -86,326 +88,352 @@
                 android:backgroundTint="#4E285E"
                 android:text="@string/transaction_expense"
                 android:textAllCaps="false"
-                android:textColor="#F8F1DC"
-                android:textSize="14sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
+            <!-- TRANSFER - UNSELECTED -->
             <Button
                 android:id="@+id/buttonTransfer"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:backgroundTint="#E4D1F1"
+                android:backgroundTint="#4E285E"
                 android:text="@string/transaction_transfer"
                 android:textAllCaps="false"
-                android:textColor="#4E285E"
-                android:textSize="14sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
         </LinearLayout>
 
-        <!-- Account and category -->
+        <!-- ACCOUNT AND CATEGORY -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="20dp">
 
+            <!-- ACCOUNT -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="7dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:text="@string/account_label"
                     android:textColor="#6C5573"
+                    android:textSize="13sp"
                     android:layout_marginBottom="6dp" />
 
                 <Spinner
                     android:id="@+id/spinnerAccount"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:backgroundTint="#7651A8"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_key_white"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
                     android:entries="@array/expense_accounts" />
+
             </LinearLayout>
 
+            <!-- CATEGORY -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="8dp">
+                android:layout_marginStart="7dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:text="@string/category_label"
-                    android:textColor="#6C5573"
+                    android:textColor="#141214"
+                    android:textSize="13sp"
                     android:layout_marginBottom="6dp" />
 
                 <Spinner
                     android:id="@+id/spinnerCategory"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:backgroundTint="#7651A8"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_key_white"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
                     android:entries="@array/expense_categories" />
+
             </LinearLayout>
+
         </LinearLayout>
 
-        <!-- Amount -->
+        <!-- AMOUNT -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:text="@string/amount_label"
             android:textColor="#7651A8"
-            android:textSize="17sp"
-            android:layout_marginBottom="8dp" />
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="2dp" />
 
         <EditText
             android:id="@+id/inputAmount"
             android:layout_width="match_parent"
-            android:layout_height="86dp"
+            android:layout_height="70dp"
             android:autofillHints="transactionAmount"
             android:backgroundTint="#7651A8"
             android:gravity="center"
             android:hint="@string/enter_amount"
             android:inputType="numberDecimal"
             android:textColor="#4E285E"
-            android:textSize="34sp"
+            android:textSize="32sp"
             android:textStyle="bold"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginBottom="18dp" />
 
-        <!-- Custom keypad -->
+        <!-- KEYPAD -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="22dp">
 
+            <!-- 1 2 3 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/key1"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_outline"
                     android:text="1"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key2"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="2"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key3"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_margin="4dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="3"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
+
             </LinearLayout>
 
+            <!-- 4 5 6 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/key4"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="4"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key5"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="5"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key6"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="6"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
+
             </LinearLayout>
 
+            <!-- 7 8 9 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/key7"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="7"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key8"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="8"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/key9"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="9"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
+
             </LinearLayout>
 
+            <!-- . 0 BACKSPACE -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
+                <!-- DECIMAL - PURPLE OPERATOR -->
                 <Button
                     android:id="@+id/keyDecimal"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_round_purple"
                     android:text="."
-                    android:textColor="#4E285E"
-                    android:textSize="24sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp" />
 
+                <!-- 0 - WHITE NUMBER KEY -->
                 <Button
                     android:id="@+id/key0"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="0"
                     android:textColor="#4E285E"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
+                <!-- BACKSPACE - PURPLE OPERATOR -->
                 <Button
                     android:id="@+id/keyBackspace"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/bg_key_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_round_purple"
                     android:text="⌫"
-                    android:textColor="#4E285E"
-                    android:textSize="24sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp" />
+
             </LinearLayout>
+
         </LinearLayout>
 
-        <!-- Date and time -->
+        <!-- DATE AND TIME -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="10dp">
 
+            <!-- DATE -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="7dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/date_label"
                     android:textColor="#6C5573"
+                    android:textSize="13sp"
                     android:layout_marginBottom="6dp" />
 
                 <Button
                     android:id="@+id/buttonDate"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:backgroundTint="#FFFFFF"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_button_white"
                     android:text="@string/choose_date"
                     android:textAllCaps="false"
-                    android:textColor="#4E285E" />
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+
             </LinearLayout>
 
+            <!-- TIME -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="8dp">
+                android:layout_marginStart="7dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Time"
                     android:textColor="#6C5573"
+                    android:textSize="13sp"
                     android:layout_marginBottom="6dp" />
 
                 <TextView
                     android:id="@+id/textTime"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_key_white"
-                    android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:textColor="#4E285E"
-                    android:textSize="16sp" />
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_wallet_add_account"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>

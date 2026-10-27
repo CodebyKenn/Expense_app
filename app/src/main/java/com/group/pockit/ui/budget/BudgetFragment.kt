@@ -35,7 +35,7 @@ class BudgetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_budget, container, false)
+        return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
     companion object {

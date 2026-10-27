@@ -27,14 +27,13 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         val accountSpinner = view.findViewById<Spinner>(R.id.spinnerAccount)
         val dateButton = view.findViewById<Button>(R.id.buttonDate)
         val timeText = view.findViewById<TextView>(R.id.textTime)
-        val saveButton = view.findViewById<Button>(R.id.buttonSaveExpense)
+        val saveButton = view.findViewById<TextView>(R.id.buttonSaveExpense)
 
         val incomeButton = view.findViewById<Button>(R.id.buttonIncome)
         val expenseButton = view.findViewById<Button>(R.id.buttonExpense)
         val transferButton = view.findViewById<Button>(R.id.buttonTransfer)
-        val cancelButton = view.findViewById<Button>(R.id.buttonCancel)
+        val cancelButton = view.findViewById<TextView>(R.id.buttonCancel)
 
-        // Prevent the normal Android keyboard from opening.
         amountInput.showSoftInputOnFocus = false
 
         setupKeypad(view, amountInput)
@@ -52,19 +51,31 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         incomeButton.setOnClickListener {
             updateTransactionType(
-                "Income", incomeButton, expenseButton, transferButton, categorySpinner
+                "Income",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
         expenseButton.setOnClickListener {
             updateTransactionType(
-                "Expense", incomeButton, expenseButton, transferButton, categorySpinner
+                "Expense",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
         transferButton.setOnClickListener {
             updateTransactionType(
-                "Transfer", incomeButton, expenseButton, transferButton, categorySpinner
+                "Transfer",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
@@ -86,6 +97,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         cancelButton.setOnClickListener {
             amountInput.text.clear()
             selectedDate = Calendar.getInstance()
+
             updateDateButton(dateButton)
             updateTimeText(timeText)
 
@@ -135,8 +147,6 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                 message,
                 Toast.LENGTH_LONG
             ).show()
-
-            // Permanent saving will be added when the database/repository is connected.
         }
     }
 
@@ -196,6 +206,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         val selectedColor = 0xFF4E285E.toInt()
         val unselectedColor = 0xFFE4D1F1.toInt()
+
         val selectedTextColor = 0xFFFFFFFF.toInt()
         val unselectedTextColor = 0xFF4E285E.toInt()
 
@@ -206,10 +217,13 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         )
 
         buttons.forEach { (button, buttonType) ->
+
             val selected = buttonType == type
 
-            button.setBackgroundColor(
-                if (selected) selectedColor else unselectedColor
+            button.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(
+                    if (selected) selectedColor else unselectedColor
+                )
             )
 
             button.setTextColor(
@@ -223,7 +237,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             else -> R.array.expense_categories
         }
 
-        categorySpinner.setAdapter(
+        categorySpinner.adapter =
             android.widget.ArrayAdapter.createFromResource(
                 requireContext(),
                 categories,
@@ -233,7 +247,6 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                     android.R.layout.simple_spinner_dropdown_item
                 )
             }
-        )
     }
 
     private fun updateDateButton(button: Button) {
