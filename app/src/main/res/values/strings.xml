@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Pockit</string>
+    <string name="hello_blank_fragment">Hello Blank Fragment</string>
+    <string name="add_expense_title">Add Expense</string>
+    <string name="amount_label">Amount</string>
+    <string name="enter_amount">Enter amount</string>
+    <string name="category_label">Category</string>
+    <string name="date_label">Date</string>
+    <string name="choose_date">Choose date</string>
+    <string name="note_label">Note (optional)</string>
+    <string name="enter_note">What was this expense for?</string>
+    <string name="save_expense">Save Expense</string>
+    <string-array name="expense_categories">
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Bills</item>
+        <item>Entertainment</item>
+        <item>Other</item>
+    </string-array>
 </resources>

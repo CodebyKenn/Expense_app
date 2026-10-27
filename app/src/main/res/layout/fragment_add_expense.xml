@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFF9F0"
+    tools:context=".ui.expenses.AddExpenseFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_expense_title"
+            android:textColor="#292333"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/amount_label"
+            android:textColor="#292333"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/inputAmount"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="@string/enter_amount"
+            android:inputType="numberDecimal"
+            android:autofillHints="transactionAmount"
+            android:padding="12dp"
+            android:backgroundTint="#7651A8"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/category_label"
+            android:textColor="#292333"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:entries="@array/expense_categories"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/date_label"
+            android:textColor="#292333"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/buttonDate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/choose_date"
+            android:backgroundTint="#E9DDF8"
+            android:textColor="#292333"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note_label"
+            android:textColor="#292333"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/inputNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="90dp"
+            android:gravity="top"
+            android:hint="@string/enter_note"
+            android:inputType="textCapSentences|textMultiLine"
+            android:padding="12dp"
+            android:backgroundTint="#7651A8"
+            android:layout_marginBottom="28dp" />
+
+        <Button
+            android:id="@+id/buttonSaveExpense"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/save_expense"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#7651A8" />
+
+    </LinearLayout>
+</ScrollView>
