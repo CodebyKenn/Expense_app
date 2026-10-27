@@ -2,8 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF7DF"
+    android:background="#F8F1DC"
     android:fillViewport="true"
+    android:clipToPadding="false"
+    android:paddingBottom="24dp"
     tools:context=".ui.wallet.WalletFragment">
 
     <LinearLayout
@@ -36,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total Balance"
-                android:textColor="#FFFFFF"
+                android:textColor="#F8F1DC"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -45,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="KSh 125,500.00"
-                android:textColor="#FFFFFF"
+                android:textColor="#F8F1DC"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp" />
@@ -59,16 +61,15 @@
             android:background="@drawable/bg_wallet_account"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:padding="12dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:gravity="center"
-                android:text="M"
-                android:textColor="#4E285E"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_mpesa"
+                android:contentDescription="M-Pesa icon"
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -113,16 +114,15 @@
             android:background="@drawable/bg_wallet_account"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:padding="12dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:gravity="center"
-                android:text="KSh"
-                android:textColor="#4E285E"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_cash"
+                android:contentDescription="Cash icon"
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -167,16 +167,15 @@
             android:background="@drawable/bg_wallet_account"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:padding="12dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:gravity="center"
-                android:text="B"
-                android:textColor="#4E285E"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_bank"
+                android:contentDescription="Bank icon"
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -221,16 +220,15 @@
             android:background="@drawable/bg_wallet_account"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:padding="12dp"
             android:layout_marginBottom="22dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:gravity="center"
-                android:text="P"
-                android:textColor="#4E285E"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_paypal"
+                android:contentDescription="PayPal icon"
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -272,12 +270,12 @@
         <Button
             android:id="@+id/buttonAddAccount"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="12dp"
             android:backgroundTint="#4E285E"
             android:text="Add Account"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
+            android:textColor="#F8F1DC"
             android:textSize="15sp"
             android:visibility="visible" />
 
