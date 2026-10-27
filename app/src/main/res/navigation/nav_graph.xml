@@ -66,16 +66,7 @@
     <fragment
         android:id="@+id/budgetFragment"
         android:name="com.group.pockit.ui.budget.BudgetFragment"
-        android:label="Budget">
-        <action
-            android:id="@+id/action_budget_to_setBudget"
-            app:destination="@id/setBudgetFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/setBudgetFragment"
-        android:name="com.group.pockit.ui.budget.SetBudgetFragment"
-        android:label="Set budget" />
+        android:label="Budget" />
 
 
     <fragment
