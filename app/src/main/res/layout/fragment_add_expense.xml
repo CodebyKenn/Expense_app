@@ -1,14 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF7DF"
+    android:fillViewport="true"
     tools:context=".ui.expenses.AddExpenseFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-</FrameLayout>
+        <!-- Header -->
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="@string/profile_dot"
+                android:textColor="#4E285E"
+                android:textSize="30sp"
+                android:contentDescription="@string/user_profile_description" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_name"
+                android:textColor="#4E285E"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:backgroundTint="#FFF7DF"
+                android:text="@string/cancel"
+                android:textColor="#4E285E"
+                android:textSize="12sp" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonSaveExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:backgroundTint="#FFF7DF"
+                android:text="@string/save_expense"
+                android:textColor="#4E285E"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Transaction type -->
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="#E4D1F1"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:layout_marginBottom="22dp">
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonIncome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="#E4D1F1"
+                android:text="@string/transaction_income"
+                android:textAllCaps="false"
+                android:textColor="#4E285E"
+                android:textSize="12sp" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonExpense"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="#4E285E"
+                android:text="@string/transaction_expense"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonTransfer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="#E4D1F1"
+                android:text="@string/transaction_transfer"
+                android:textAllCaps="false"
+                android:textColor="#4E285E"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Account and category -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/account_label"
+                    android:textColor="#6C5573"
+                    android:layout_marginBottom="6dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:backgroundTint="#7651A8"
+                    android:entries="@array/expense_accounts" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/category_label"
+                    android:textColor="#6C5573"
+                    android:layout_marginBottom="6dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:backgroundTint="#7651A8"
+                    android:entries="@array/expense_categories" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Amount -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/amount_label"
+            android:textColor="#7651A8"
+            android:textSize="17sp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/inputAmount"
+            android:layout_width="match_parent"
+            android:layout_height="86dp"
+            android:autofillHints="transactionAmount"
+            android:backgroundTint="#7651A8"
+            android:gravity="center"
+            android:hint="@string/enter_amount"
+            android:inputType="numberDecimal"
+            android:textColor="#4E285E"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Date -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/date_label"
+            android:textColor="#6C5573"
+            android:layout_marginBottom="6dp" />
+
+        <Button
+            android:id="@+id/buttonDate"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:backgroundTint="#FFFFFF"
+            android:text="@string/choose_date"
+            android:textAllCaps="false"
+            android:textColor="#4E285E"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Note -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note_label"
+            android:textColor="#6C5573"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/inputNote"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:autofillHints="none"
+            android:backgroundTint="#7651A8"
+            android:gravity="center_vertical"
+            android:hint="@string/enter_note"
+            android:inputType="textCapSentences"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp" />
+
+    </LinearLayout>
+</ScrollView>
