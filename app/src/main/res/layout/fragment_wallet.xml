@@ -1,0 +1,286 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF7DF"
+    android:fillViewport="true"
+    tools:context=".ui.wallet.WalletFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- PAGE TITLE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All Accounts"
+            android:textColor="#4E285E"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="18dp" />
+
+        <!-- TOTAL BALANCE -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/bg_wallet_total"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="22dp"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Balance"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textTotalBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KSh 125,500.00"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <!-- M-PESA -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:background="@drawable/bg_wallet_account"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:gravity="center"
+                android:text="M"
+                android:textColor="#4E285E"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M-Pesa"
+                    android:textColor="#4E285E"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Balance"
+                    android:textColor="#7651A8"
+                    android:textSize="13sp"
+                    android:layout_marginTop="5dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textMpesaBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KSh 35,000.00"
+                android:textColor="#2E8B57"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- CASH -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:background="@drawable/bg_wallet_account"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:gravity="center"
+                android:text="KSh"
+                android:textColor="#4E285E"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cash"
+                    android:textColor="#4E285E"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Balance"
+                    android:textColor="#7651A8"
+                    android:textSize="13sp"
+                    android:layout_marginTop="5dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textCashBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KSh 10,000.00"
+                android:textColor="#2E8B57"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- BANK -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:background="@drawable/bg_wallet_account"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:gravity="center"
+                android:text="B"
+                android:textColor="#4E285E"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bank"
+                    android:textColor="#4E285E"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Balance"
+                    android:textColor="#7651A8"
+                    android:textSize="13sp"
+                    android:layout_marginTop="5dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textBankBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KSh 70,500.00"
+                android:textColor="#2E8B57"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- PAYPAL -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:background="@drawable/bg_wallet_account"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:gravity="center"
+                android:text="P"
+                android:textColor="#4E285E"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PayPal"
+                    android:textColor="#4E285E"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Balance"
+                    android:textColor="#7651A8"
+                    android:textSize="13sp"
+                    android:layout_marginTop="5dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textPaypalBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KSh 10,000.00"
+                android:textColor="#2E8B57"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- ADD ACCOUNT -->
+        <Button
+            android:id="@+id/buttonAddAccount"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="#4E285E"
+            android:text="Add Account"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+</ScrollView>
