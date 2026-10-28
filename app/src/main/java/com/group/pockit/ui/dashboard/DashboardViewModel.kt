@@ -1,8 +1,23 @@
 package com.group.pockit.ui.dashboard
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.group.pockit.data.PockitRepository
+import com.group.pockit.data.Session
+import com.group.pockit.data.model.RecordItem
+import com.group.pockit.data.model.RecordType
+import com.group.pockit.util.DateRanges
+import com.group.pockit.util.Period
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class Overview(
     val remaining: Double,
@@ -25,41 +40,74 @@ data class DashboardState(
     val recent: List<Transaction>
 )
 
-class DashboardViewModel : ViewModel() {
+class DashboardViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val _state = MutableLiveData<DashboardState>()
+    private val repo = PockitRepository.get(app)
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
+
+    private val _state = MediatorLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
 
     private var currentType = "Expense"
+    private var currentPeriod = Period.MONTH
 
-    // Monthly budget limit (sample value until the database is connected)
     private val monthlyLimit = 11500.0
 
-    // Sample transactions: same numbers as the Summary and Budget screens
-    private val allTransactions = listOf(
-        Transaction("1", "Shopping", "M-Pesa", "26 Oct", 3500.0, "Expense"),
-        Transaction("2", "Food", "Cash", "25 Oct", 3450.0, "Expense"),
-        Transaction("3", "Bills", "Bank", "25 Oct", 2500.0, "Expense"),
-        Transaction("4", "Entertainment", "M-Pesa", "23 Oct", 1200.0, "Expense"),
-        Transaction("5", "Transport", "M-Pesa", "22 Oct", 200.0, "Expense"),
-        Transaction("6", "Salary", "Bank", "20 Oct", 45000.0, "Income"),
-        Transaction("7", "Gift", "Cash", "15 Oct", 2000.0, "Income")
-    )
+    val greetingName: String get() = Session.displayName
 
     init {
-        loadData()
+        viewModelScope.launch {
+            repo.ensureDefaultAccounts()
+        }
+        setupLiveDataSources()
     }
 
     fun setType(type: String) {
         currentType = type
-        loadData()
+        setupLiveDataSources()
     }
 
-    private fun loadData() {
-        val totalSpent = allTransactions.filter { it.type == "Expense" }.sumOf { it.amount }
-        val totalIncome = allTransactions.filter { it.type == "Income" }.sumOf { it.amount }
+    fun setPeriod(period: Period) {
+        currentPeriod = period
+        setupLiveDataSources()
+    }
 
-        // Numbers are now calculated from the transactions, not typed in
+    fun loadDemoData() {
+        viewModelScope.launch {
+            repo.seedDemoData()
+        }
+    }
+
+    private fun setupLiveDataSources() {
+        val range = DateRanges.of(currentPeriod, LocalDate.now())
+        val incomeLive = repo.observeTotal(RecordType.INCOME, range).asLiveData()
+        val expenseLive = repo.observeTotal(RecordType.EXPENSE, range).asLiveData()
+        val recentLive = repo.observeRecent(50).asLiveData()
+
+        _state.removeSource(incomeLive)
+        _state.removeSource(expenseLive)
+        _state.removeSource(recentLive)
+
+        _state.addSource(incomeLive) { income ->
+            val expense = expenseLive.value ?: 0.0
+            val inc = income ?: 0.0
+            val recentItems = recentLive.value ?: emptyList()
+            updateState(inc, expense, recentItems)
+        }
+        _state.addSource(expenseLive) { expense ->
+            val income = incomeLive.value ?: 0.0
+            val exp = expense ?: 0.0
+            val recentItems = recentLive.value ?: emptyList()
+            updateState(income, exp, recentItems)
+        }
+        _state.addSource(recentLive) { recentItems ->
+            val income = incomeLive.value ?: 0.0
+            val expense = expenseLive.value ?: 0.0
+            updateState(income, expense, recentItems)
+        }
+    }
+
+    private fun updateState(totalIncome: Double, totalSpent: Double, items: List<RecordItem>) {
         val overview = if (currentType == "Expense") {
             Overview(
                 remaining = monthlyLimit - totalSpent,
@@ -68,7 +116,6 @@ class DashboardViewModel : ViewModel() {
                 over = totalSpent > monthlyLimit
             )
         } else {
-            // Income view: how much of this month's income is left after spending
             Overview(
                 remaining = totalIncome - totalSpent,
                 spent = totalSpent,
@@ -77,9 +124,30 @@ class DashboardViewModel : ViewModel() {
             )
         }
 
+        val filteredItems = items.filter { item ->
+            if (currentType == "Expense") item.isExpense else item.isIncome
+        }.map { item ->
+            val dateStr = try {
+                Instant.ofEpochMilli(item.timestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .format(dateFormatter)
+            } catch (e: Exception) {
+                "Today"
+            }
+            Transaction(
+                id = item.id.toString(),
+                category = item.categoryName ?: item.toAccountName ?: "General",
+                account = item.accountName,
+                date = dateStr,
+                amount = item.amount,
+                type = if (item.isIncome) "Income" else if (item.isExpense) "Expense" else "Transfer"
+            )
+        }
+
         _state.value = DashboardState(
             overview = overview,
-            recent = allTransactions.filter { it.type == currentType }
+            recent = filteredItems
         )
     }
 }
