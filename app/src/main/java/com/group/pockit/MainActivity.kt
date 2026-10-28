@@ -26,10 +26,10 @@ class MainActivity : AppCompatActivity() {
         // Connect your bottom navigation bar automatically to your navigation maps
         binding.bottomNav.setupWithNavController(navController)
 
-        // Hide bottom nav on welcome, login, and register screens
+        // Hide bottom nav on splash, welcome, login, and register screens
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.welcomeFragment, R.id.loginFragment, R.id.registerFragment -> {
+                R.id.splashFragment, R.id.welcomeFragment, R.id.loginFragment, R.id.registerFragment -> {
                     binding.bottomNav.visibility = View.GONE
                 }
                 else -> {

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.group.pockit.R
+import com.group.pockit.data.Session
 
 class RegisterFragment : Fragment(R.layout.fragment_register) {
 
@@ -39,7 +40,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 password != confirmPassword ->
                     etConfirmPassword.error = "Passwords do not match"
                 else -> {
-                    // TODO: save the user when the data/auth code is ready
+                    // Save user display name in Session
+                    Session.displayName = name
                     Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_register_to_dashboard)
                 }

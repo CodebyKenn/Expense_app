@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.group.pockit.R
+import com.group.pockit.data.Session
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
@@ -30,7 +31,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     etEmail.error = "Enter a valid email"
                 password.isEmpty() -> etPassword.error = "Enter your password"
                 else -> {
-                    // TODO replace with the real login check when the data/auth code is ready
+                    // Set display name from email username
+                    val userPrefix = email.substringBefore("@")
+                    Session.displayName = userPrefix.replaceFirstChar { it.uppercase() }
                     findNavController().navigate(R.id.action_login_to_dashboard)
                 }
             }

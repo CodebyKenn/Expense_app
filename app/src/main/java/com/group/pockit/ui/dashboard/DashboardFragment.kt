@@ -13,6 +13,7 @@ import com.group.pockit.R
 import com.group.pockit.databinding.FragmentDashboardBinding
 import java.time.LocalTime
 import android.content.res.ColorStateList
+import com.group.pockit.data.Session
 
 class DashboardFragment : Fragment() {
 
@@ -21,8 +22,6 @@ class DashboardFragment : Fragment() {
 
     private val vm: DashboardViewModel by viewModels()
     private lateinit var adapter: TransactionAdapter
-
-    private val DUMMY_NAME = "User"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +45,7 @@ class DashboardFragment : Fragment() {
             else -> "Good Evening,"
         }
 
-        b.tvName.text = DUMMY_NAME
+        b.tvName.text = Session.displayName.ifBlank { "User" }
 
         b.fabAdd.setOnClickListener {
             NavHostFragment.findNavController(this)
@@ -56,7 +55,6 @@ class DashboardFragment : Fragment() {
             NavHostFragment.findNavController(this)
                 .navigate(R.id.action_global_logout)
         }
-
 
         b.tabDay.setOnClickListener { setTimeTab(b.tabDay) }
         b.tabWeek.setOnClickListener { setTimeTab(b.tabWeek) }

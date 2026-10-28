@@ -13,14 +13,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.group.pockit.R
 import com.group.pockit.databinding.FragmentBudgetBinding
+import com.group.pockit.data.model.BudgetStatus
 import kotlin.math.roundToInt
-
-// One category: how much was spent and its monthly limit (null = no limit set yet)
-data class BudgetCategory(val name: String, val spent: Double, var limit: Double?)
 
 private fun ksh(v: Double) = String.format("%,.0f", v)
 
@@ -33,15 +32,7 @@ class BudgetFragment : Fragment() {
     private var _binding: FragmentBudgetBinding? = null
     private val b get() = _binding!!
 
-    // Sample data until the database is connected
-    private val categories = mutableListOf(
-        BudgetCategory("Shopping", 3500.0, 3000.0),
-        BudgetCategory("Food", 3450.0, 4000.0),
-        BudgetCategory("Transport", 200.0, 1000.0),
-        BudgetCategory("Bills", 2500.0, 3500.0),
-        BudgetCategory("Entertainment", 1200.0, null)
-    )
-    private var customTotal: Double? = null   // set with "Edit total budget"
+    private val viewModel: BudgetViewModel by viewModels()
     private lateinit var adapter: BudgetAdapter
 
     override fun onCreateView(
@@ -54,48 +45,42 @@ class BudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        b.tvMonth.text = "Oct 2026"
-        b.tvRemainingLabel.text = "Left to spend this month"
-
-        adapter = BudgetAdapter(categories) { index ->
-            val cat = categories[index]
-            askAmount("Monthly limit for ${cat.name}") { amount ->
-                cat.limit = amount
-                refresh()
+        b.rvCategories.layoutManager = LinearLayoutManager(requireContext())
+        adapter = BudgetAdapter(emptyList()) { categoryId, categoryName ->
+            askAmount("Monthly limit for $categoryName") { amount ->
+                viewModel.setBudget(categoryId, amount) { success ->
+                    if (success) Toast.makeText(requireContext(), "Budget saved", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-        b.rvCategories.layoutManager = LinearLayoutManager(requireContext())
         b.rvCategories.adapter = adapter
 
-        b.btnEditTotal.setOnClickListener {
-            askAmount("Total monthly budget") { amount ->
-                customTotal = amount
-                refresh()
-            }
+        viewModel.monthLabel.observe(viewLifecycleOwner) { label ->
+            b.tvMonth.text = label
         }
 
-        refresh()
+        viewModel.overview.observe(viewLifecycleOwner) { overview ->
+            b.tvRemainingLabel.text = "Left to spend this month"
+            val remaining = overview.remaining
+            val spent = overview.totalSpent
+            val limit = overview.totalLimit
+            val percent = overview.usedPercent
+
+            b.tvRemaining.text =
+                if (remaining >= 0) "KSh ${ksh(remaining)}" else "KSh ${ksh(-remaining)} over"
+            b.tvSpentOfLimit.text = "Spent KSh ${ksh(spent)} of KSh ${ksh(limit)} limit"
+            b.tvPercentUsed.text = "$percent% used"
+            b.progressBudget.progress = percent.coerceAtMost(100)
+            b.progressBudget.progressTintList = ColorStateList.valueOf(0xFFFFD400.toInt())
+            b.progressBudget.progressBackgroundTintList = ColorStateList.valueOf(0x55FFFFFF)
+
+            adapter.submitList(overview.categories)
+        }
+
+        b.btnPrev.setOnClickListener { viewModel.previousMonth() }
+        b.btnNext.setOnClickListener { viewModel.nextMonth() }
     }
 
-    // Recalculates the purple card and redraws the list
-    private fun refresh() {
-        val spent = categories.sumOf { it.spent }
-        val limit = customTotal ?: categories.sumOf { it.limit ?: 0.0 }
-        val remaining = limit - spent
-        val percent = if (limit > 0) (spent / limit * 100).roundToInt() else 0
-
-        b.tvRemaining.text =
-            if (remaining >= 0) "KSh ${ksh(remaining)}" else "KSh ${ksh(-remaining)} over"
-        b.tvSpentOfLimit.text = "Spent KSh ${ksh(spent)} of KSh ${ksh(limit)} limit"
-        b.tvPercentUsed.text = "$percent% used"
-        b.progressBudget.progress = percent.coerceAtMost(100)
-        b.progressBudget.progressTintList = ColorStateList.valueOf(0xFFFFD400.toInt())
-        b.progressBudget.progressBackgroundTintList = ColorStateList.valueOf(0x55FFFFFF)
-
-        adapter.notifyDataSetChanged()
-    }
-
-    // Small popup with a number box
     private fun askAmount(title: String, onSave: (Double) -> Unit) {
         val input = EditText(requireContext()).apply {
             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -120,9 +105,14 @@ class BudgetFragment : Fragment() {
 }
 
 class BudgetAdapter(
-    private val items: List<BudgetCategory>,
-    private val onSetBudget: (Int) -> Unit
+    private var items: List<BudgetStatus>,
+    private val onSetBudget: (Long, String) -> Unit
 ) : RecyclerView.Adapter<BudgetAdapter.VH>() {
+
+    fun submitList(newItems: List<BudgetStatus>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
         val name: TextView = v.findViewById(R.id.tvName)
@@ -140,9 +130,8 @@ class BudgetAdapter(
         h.name.text = cat.name
         h.bar.progressBackgroundTintList = ColorStateList.valueOf(0xFFF3EEF6.toInt())
 
-        val limit = cat.limit
+        val limit = cat.limitAmount
         if (limit == null) {
-            // No limit yet: show a "Set budget" button
             h.spentOf.text = "KSh ${ksh(cat.spent)} spent · no limit"
             h.status.text = "Set budget"
             h.status.setTextColor(0xFF46044B.toInt())
@@ -150,23 +139,23 @@ class BudgetAdapter(
                 cornerRadius = 60f
                 setStroke(3, 0xFF46044B.toInt())
             }
-            h.status.setOnClickListener { onSetBudget(h.bindingAdapterPosition) }
+            h.status.setOnClickListener { onSetBudget(cat.categoryId, cat.name) }
             h.bar.visibility = View.GONE
             return
         }
 
-        val ratio = cat.spent / limit
+        val ratio = if (limit > 0.0) cat.spent / limit else 0.0
         val color = when {
-            ratio > 1.0 -> RED
-            ratio >= 0.8 -> AMBER
+            cat.isOver -> RED
+            cat.isNearLimit -> AMBER
             else -> PURPLE
         }
         h.spentOf.text = "KSh ${ksh(cat.spent)} of KSh ${ksh(limit)}"
-        h.status.text = if (cat.spent > limit) "KSh ${ksh(cat.spent - limit)} over"
+        h.status.text = if (cat.isOver) "KSh ${ksh(cat.spent - limit)} over"
         else "KSh ${ksh(limit - cat.spent)} left"
         h.status.setTextColor(color)
         h.status.background = null
-        h.status.setOnClickListener { onSetBudget(h.bindingAdapterPosition) } // tap to change the limit
+        h.status.setOnClickListener { onSetBudget(cat.categoryId, cat.name) }
         h.bar.visibility = View.VISIBLE
         h.bar.progress = (ratio * 100).roundToInt().coerceAtMost(100)
         h.bar.progressTintList = ColorStateList.valueOf(color)
