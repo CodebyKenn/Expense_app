@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.group.pockit.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard">
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.group.pockit.AddExpenseFragment"
+        android:label="Add Expense"
+        tools:layout="@layout/fragment_add_expense" />
+
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.group.pockit.ui.dashboard.SummaryFragment"
+        android:label="Summary"
+        tools:layout="@layout/fragment_summary" />
+
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.group.pockit.ui.budget.BudgetFragment"
+        android:label="Budget"
+        tools:layout="@layout/fragment_budget" />
+
+    <fragment
+        android:id="@+id/walletFragment"
+        android:name="com.group.pockit.wallet.WalletFragment"
+        android:label="Wallet"
+        tools:layout="@layout/fragment_welcome" />
 
 </navigation>
