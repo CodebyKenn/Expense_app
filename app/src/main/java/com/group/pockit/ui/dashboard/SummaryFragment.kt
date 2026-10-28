@@ -1,6 +1,5 @@
 package com.group.pockit.ui.dashboard
 
-
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,20 +8,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.group.pockit.R
+import com.group.pockit.data.model.CategoryShare
 import com.group.pockit.databinding.FragmentSummaryBinding
+import com.group.pockit.ui.analysis.AnalysisViewModel
+import com.group.pockit.util.Period
 import kotlin.math.roundToInt
-
-// Sample data until the database is connected
-private val SAMPLE_SPENDING = listOf(
-    "Shopping" to 3500.0,
-    "Food" to 3450.0,
-    "Bills" to 2500.0,
-    "Entertainment" to 1200.0,
-    "Transport" to 200.0
-)
 
 private fun ksh(v: Double) = String.format("%,.0f", v)
 
@@ -30,6 +24,8 @@ class SummaryFragment : Fragment() {
 
     private var _binding: FragmentSummaryBinding? = null
     private val b get() = _binding!!
+
+    private val viewModel: AnalysisViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,43 +37,69 @@ class SummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        b.tvRange.text = "October 2026"
-        val total = SAMPLE_SPENDING.sumOf { it.second }
-        b.tvTotal.text = "KSh ${ksh(total)}"
-
-        // Donut chart: each slice = that category's share of the total
-        val slices = SAMPLE_SPENDING.mapIndexed { i, (_, amount) ->
-            (amount / total).toFloat() to ChartColors.at(i)
-        }
-        b.donut.setData(slices, "Total spent", "KSh ${ksh(total)}")
-
-        // Legend next to the chart
-        b.legend.removeAllViews()
-        SAMPLE_SPENDING.forEachIndexed { i, (name, _) ->
-            b.legend.addView(legendRow(name, ChartColors.at(i)))
-        }
-
-        // List of category cards
         b.rvCategories.layoutManager = LinearLayoutManager(requireContext())
-        b.rvCategories.adapter = SummaryAdapter(SAMPLE_SPENDING, total)
 
-        // Day / Week / Month tabs (only the highlight changes for now)
-        val tabs = listOf(b.tvDay, b.tvWeek, b.tvMonth)
-        tabs.forEach { tab -> tab.setOnClickListener { selectTab(tab, tabs) } }
-        selectTab(b.tvMonth, tabs)
-    }
+        // Period pills: Day / Week / Month
+        b.tvDay.setOnClickListener { viewModel.setPeriod(Period.DAY) }
+        b.tvWeek.setOnClickListener { viewModel.setPeriod(Period.WEEK) }
+        b.tvMonth.setOnClickListener { viewModel.setPeriod(Period.MONTH) }
 
-    private fun selectTab(selected: TextView, all: List<TextView>) {
-        all.forEach { tab ->
-            if (tab == selected) {
-                tab.background = GradientDrawable().apply {
-                    cornerRadius = dp(20).toFloat()
-                    setColor(0xFF46044B.toInt())
+        // Arrows: Prev / Next
+        b.btnPrev.setOnClickListener { viewModel.previous() }
+        b.btnNext.setOnClickListener { viewModel.next() }
+
+        // Observe ViewModel data
+        viewModel.rangeLabel.observe(viewLifecycleOwner) { label ->
+            b.tvRange.text = label
+        }
+
+        viewModel.expenseTotal.observe(viewLifecycleOwner) { total ->
+            val safeTotal = total ?: 0.0
+            b.tvTotal.text = "KSh ${ksh(safeTotal)}"
+        }
+
+        viewModel.period.observe(viewLifecycleOwner) { currentPeriod ->
+            val tabs = listOf(b.tvDay, b.tvWeek, b.tvMonth)
+            val selectedTab = when (currentPeriod) {
+                Period.DAY -> b.tvDay
+                Period.WEEK -> b.tvWeek
+                Period.MONTH -> b.tvMonth
+                else -> b.tvMonth
+            }
+            tabs.forEach { tab ->
+                if (tab == selectedTab) {
+                    tab.background = GradientDrawable().apply {
+                        cornerRadius = dp(20).toFloat()
+                        setColor(0xFF46044B.toInt())
+                    }
+                    tab.setTextColor(0xFFFFFFFF.toInt())
+                } else {
+                    tab.background = null
+                    tab.setTextColor(0xFF46044B.toInt())
                 }
-                tab.setTextColor(0xFFFFFFFF.toInt())
+            }
+        }
+
+        viewModel.expenseBreakdown.observe(viewLifecycleOwner) { items ->
+            val total = items.sumOf { it.total }
+            b.tvEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+            b.rvCategories.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+
+            if (items.isNotEmpty()) {
+                val slices = items.mapIndexed { i, item ->
+                    (item.total / total).toFloat() to ChartColors.at(i)
+                }
+                b.donut.setData(slices, "Total spent", "KSh ${ksh(total)}")
+
+                b.legend.removeAllViews()
+                items.forEachIndexed { i, item ->
+                    b.legend.addView(legendRow(item.name, ChartColors.at(i)))
+                }
+
+                b.rvCategories.adapter = DbSummaryAdapter(items, total)
             } else {
-                tab.background = null
-                tab.setTextColor(0xFF46044B.toInt())
+                b.donut.setData(emptyList(), "Total spent", "KSh 0")
+                b.legend.removeAllViews()
             }
         }
     }
@@ -110,10 +132,10 @@ class SummaryFragment : Fragment() {
     }
 }
 
-class SummaryAdapter(
-    private val items: List<Pair<String, Double>>,
+class DbSummaryAdapter(
+    private val items: List<CategoryShare>,
     private val total: Double
-) : RecyclerView.Adapter<SummaryAdapter.VH>() {
+) : RecyclerView.Adapter<DbSummaryAdapter.VH>() {
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
         val dot: View = v.findViewById(R.id.vDot)
@@ -127,16 +149,17 @@ class SummaryAdapter(
     )
 
     override fun onBindViewHolder(h: VH, position: Int) {
-        val (name, amount) = items[position]
+        val item = items[position]
         val color = ChartColors.at(position)
         h.dot.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
             setColor(color)
         }
-        h.name.text = name
-        h.percent.text = "• ${(amount / total * 100).roundToInt()}%"
+        h.name.text = item.name
+        val pct = if (total > 0) (item.total / total * 100).roundToInt() else 0
+        h.percent.text = "• $pct%"
         h.percent.setTextColor(color)
-        h.amount.text = "- KSh ${ksh(amount)}"
+        h.amount.text = "- KSh ${ksh(item.total)}"
     }
 
     override fun getItemCount() = items.size

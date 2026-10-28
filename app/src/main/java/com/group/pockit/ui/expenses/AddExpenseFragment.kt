@@ -1,8 +1,11 @@
 package com.group.pockit.ui.expenses
 
 import android.app.DatePickerDialog
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -40,6 +43,20 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         updateDateButton(dateButton)
         updateTimeText(timeText)
+
+        // Ensure account spinner text color is black
+        accountSpinner.adapter = object : ArrayAdapter<CharSequence>(requireContext(), android.R.layout.simple_spinner_item, resources.getStringArray(R.array.expense_accounts)) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getView(position, convertView, parent)
+                (v as? TextView)?.setTextColor(0xFF000000.toInt())
+                return v
+            }
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getDropDownView(position, convertView, parent)
+                (v as? TextView)?.setTextColor(0xFF000000.toInt())
+                return v
+            }
+        }
 
         updateTransactionType(
             "Expense",
@@ -204,11 +221,12 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
     ) {
         transactionType = type
 
-        val selectedColor = 0xFF4E285E.toInt()
-        val unselectedColor = 0xFFE4D1F1.toInt()
+        // Inverted: Selected is Lavender (#E4D1F1) with dark text (#4E285E), Unselected is Dark Purple (#4E285E) with white text
+        val selectedColor = 0xFFE4D1F1.toInt()
+        val unselectedColor = 0xFF4E285E.toInt()
 
-        val selectedTextColor = 0xFFFFFFFF.toInt()
-        val unselectedTextColor = 0xFF4E285E.toInt()
+        val selectedTextColor = 0xFF4E285E.toInt()
+        val unselectedTextColor = 0xFFFFFFFF.toInt()
 
         val buttons = listOf(
             incomeButton to "Income",
@@ -221,7 +239,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             val selected = buttonType == type
 
             button.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(
+                ColorStateList.valueOf(
                     if (selected) selectedColor else unselectedColor
                 )
             )
@@ -237,16 +255,19 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             else -> R.array.expense_categories
         }
 
-        categorySpinner.adapter =
-            android.widget.ArrayAdapter.createFromResource(
-                requireContext(),
-                categories,
-                android.R.layout.simple_spinner_item
-            ).also {
-                it.setDropDownViewResource(
-                    android.R.layout.simple_spinner_dropdown_item
-                )
+        val catArray = resources.getStringArray(categories)
+        categorySpinner.adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, catArray) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getView(position, convertView, parent)
+                (v as? TextView)?.setTextColor(0xFF000000.toInt())
+                return v
             }
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getDropDownView(position, convertView, parent)
+                (v as? TextView)?.setTextColor(0xFF000000.toInt())
+                return v
+            }
+        }
     }
 
     private fun updateDateButton(button: Button) {

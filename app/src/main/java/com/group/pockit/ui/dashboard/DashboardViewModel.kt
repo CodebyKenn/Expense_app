@@ -58,6 +58,7 @@ class DashboardViewModel(app: Application) : AndroidViewModel(app) {
     init {
         viewModelScope.launch {
             repo.ensureDefaultAccounts()
+            repo.seedDemoData()
         }
         setupLiveDataSources()
     }
@@ -132,7 +133,7 @@ class DashboardViewModel(app: Application) : AndroidViewModel(app) {
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
                     .format(dateFormatter)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 "Today"
             }
             Transaction(
