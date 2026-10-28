@@ -56,7 +56,12 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.group.pockit.ui.dashboard.DashboardFragment"
-        android:label="Dashboard" />
+        android:label="Dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/summaryFragment"
@@ -79,5 +84,10 @@
         android:id="@+id/expenseListFragment"
         android:name="com.group.pockit.ui.expenses.ExpenseListFragment"
         android:label="Expenses" />
+
+    <fragment
+        android:id="@+id/walletFragment"
+        android:name="com.group.pockit.ui.wallet.WalletFragment"
+        android:label="Wallet" />
 
 </navigation>

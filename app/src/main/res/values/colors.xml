@@ -10,4 +10,12 @@
     <color name="gradient_bottom">#FFF2D9F0</color>
     <color name="expense_red">#FF9E0F4F</color>
     <color name="income_green">#FF6E8F5A</color>
+    <color name="pockit_bg">#F8F1DC</color>
+    <color name="pockit_purple">#46044B</color>
+    <color name="pockit_purple_light">#9966A0</color>
+    <color name="p2_gray">#8A8397</color>
+    <color name="p2_red">#E8112D</color>
+    <color name="p2_white">#FFFFFF</color>
+    <color name="text_gray">#8A8397</color>
+    <color name="text_dark">#46044B</color>
 </resources>
