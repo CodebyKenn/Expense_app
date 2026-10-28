@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.group.pockit.R
 import com.group.pockit.data.model.CategoryShare
+import com.group.pockit.data.model.RecordType
 import com.group.pockit.databinding.FragmentSummaryBinding
 import com.group.pockit.ui.analysis.AnalysisViewModel
 import com.group.pockit.util.Period
@@ -39,6 +40,11 @@ class SummaryFragment : Fragment() {
 
         b.rvCategories.layoutManager = LinearLayoutManager(requireContext())
 
+        // Transaction type tabs: Expense / Income / Transfer
+        b.tabExpense.setOnClickListener { viewModel.setRecordType(RecordType.EXPENSE) }
+        b.tabIncome.setOnClickListener { viewModel.setRecordType(RecordType.INCOME) }
+        b.tabTransfer.setOnClickListener { viewModel.setRecordType(RecordType.TRANSFER) }
+
         // Period pills: Day / Week / Month
         b.tvDay.setOnClickListener { viewModel.setPeriod(Period.DAY) }
         b.tvWeek.setOnClickListener { viewModel.setPeriod(Period.WEEK) }
@@ -48,16 +54,63 @@ class SummaryFragment : Fragment() {
         b.btnPrev.setOnClickListener { viewModel.previous() }
         b.btnNext.setOnClickListener { viewModel.next() }
 
-        // Observe ViewModel data
+        // Observe range label
         viewModel.rangeLabel.observe(viewLifecycleOwner) { label ->
             b.tvRange.text = label
         }
 
-        viewModel.expenseTotal.observe(viewLifecycleOwner) { total ->
+        // Observe selected record type and update tab styling
+        viewModel.recordType.observe(viewLifecycleOwner) { type ->
+            val selectedBg = GradientDrawable().apply {
+                cornerRadius = dp(16).toFloat()
+                setColor(0xFFE4D1F1.toInt())
+            }
+            val unselectedBg = null
+
+            when (type) {
+                RecordType.EXPENSE -> {
+                    b.tabExpense.background = selectedBg
+                    b.tabExpense.setTextColor(0xFF4E285E.toInt())
+                    b.tabIncome.background = unselectedBg
+                    b.tabIncome.setTextColor(0xFFFFFFFF.toInt())
+                    b.tabTransfer.background = unselectedBg
+                    b.tabTransfer.setTextColor(0xFFFFFFFF.toInt())
+
+                    b.tvTypeHeading.text = "EXPENSE"
+                    b.tvTotal.setTextColor(0xFFE8112D.toInt())
+                }
+                RecordType.INCOME -> {
+                    b.tabExpense.background = unselectedBg
+                    b.tabExpense.setTextColor(0xFFFFFFFF.toInt())
+                    b.tabIncome.background = selectedBg
+                    b.tabIncome.setTextColor(0xFF4E285E.toInt())
+                    b.tabTransfer.background = unselectedBg
+                    b.tabTransfer.setTextColor(0xFFFFFFFF.toInt())
+
+                    b.tvTypeHeading.text = "INCOME"
+                    b.tvTotal.setTextColor(0xFF6E8F5A.toInt())
+                }
+                RecordType.TRANSFER -> {
+                    b.tabExpense.background = unselectedBg
+                    b.tabExpense.setTextColor(0xFFFFFFFF.toInt())
+                    b.tabIncome.background = unselectedBg
+                    b.tabIncome.setTextColor(0xFFFFFFFF.toInt())
+                    b.tabTransfer.background = selectedBg
+                    b.tabTransfer.setTextColor(0xFF4E285E.toInt())
+
+                    b.tvTypeHeading.text = "TRANSFER"
+                    b.tvTotal.setTextColor(0xFF46044B.toInt())
+                }
+            }
+        }
+
+        // Observe total for active type
+        viewModel.activeTotal.observe(viewLifecycleOwner) { total ->
             val safeTotal = total ?: 0.0
             b.tvTotal.text = "KSh ${ksh(safeTotal)}"
         }
 
+        // Observe period and update period pill styling
         viewModel.period.observe(viewLifecycleOwner) { currentPeriod ->
             val tabs = listOf(b.tvDay, b.tvWeek, b.tvMonth)
             val selectedTab = when (currentPeriod) {
@@ -80,16 +133,23 @@ class SummaryFragment : Fragment() {
             }
         }
 
-        viewModel.expenseBreakdown.observe(viewLifecycleOwner) { items ->
+        // Observe active breakdown (pie chart + list)
+        viewModel.activeBreakdown.observe(viewLifecycleOwner) { items ->
             val total = items.sumOf { it.total }
             b.tvEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
             b.rvCategories.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+
+            val currentTypeStr = when (viewModel.recordType.value) {
+                RecordType.INCOME -> "Total income"
+                RecordType.TRANSFER -> "Total transfer"
+                else -> "Total spent"
+            }
 
             if (items.isNotEmpty()) {
                 val slices = items.mapIndexed { i, item ->
                     (item.total / total).toFloat() to ChartColors.at(i)
                 }
-                b.donut.setData(slices, "Total spent", "KSh ${ksh(total)}")
+                b.donut.setData(slices, currentTypeStr, "KSh ${ksh(total)}")
 
                 b.legend.removeAllViews()
                 items.forEachIndexed { i, item ->
@@ -98,7 +158,7 @@ class SummaryFragment : Fragment() {
 
                 b.rvCategories.adapter = DbSummaryAdapter(items, total)
             } else {
-                b.donut.setData(emptyList(), "Total spent", "KSh 0")
+                b.donut.setData(emptyList(), currentTypeStr, "KSh 0")
                 b.legend.removeAllViews()
             }
         }
@@ -159,7 +219,7 @@ class DbSummaryAdapter(
         val pct = if (total > 0) (item.total / total * 100).roundToInt() else 0
         h.percent.text = "• $pct%"
         h.percent.setTextColor(color)
-        h.amount.text = "- KSh ${ksh(item.total)}"
+        h.amount.text = "KSh ${ksh(item.total)}"
     }
 
     override fun getItemCount() = items.size

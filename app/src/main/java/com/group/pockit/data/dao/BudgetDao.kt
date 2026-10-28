@@ -18,6 +18,9 @@ interface BudgetDao {
     @Query("DELETE FROM budgets WHERE userId = :userId AND month = :month AND categoryId = :categoryId")
     suspend fun remove(userId: String, month: String, categoryId: Long): Int
 
+    @Query("DELETE FROM budgets WHERE userId = :userId")
+    suspend fun deleteAll(userId: String): Int
+
     /**
      * The whole Budget screen in one query: EVERY expense category, with its limit for the
      * month (null if none set) and how much has been spent in it during that month.

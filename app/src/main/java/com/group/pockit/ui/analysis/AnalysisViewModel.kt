@@ -17,21 +17,17 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 
-/**
- * "Analysis" screens: the Day / Week / Month switch, the "< Oct 19 - Oct 25 >" arrows,
- * the EXPENSE / INCOME / TOTAL line and the three tabs (Expenses, Income, Accounts).
- * One ViewModel serves all three tabs, because they share the same period.
- *
- * Tabs: Expenses -> expenseBreakdown, Income -> incomeBreakdown, Accounts -> accountFlows.
- */
 class AnalysisViewModel(app: Application) : AndroidViewModel(app) {
 
     private val repo = PockitRepository.get(app)
 
     private data class Window(val period: Period, val anchor: LocalDate)
 
-    private val window = MutableStateFlow(Window(Period.WEEK, LocalDate.now()))
+    private val window = MutableStateFlow(Window(Period.MONTH, LocalDate.now()))
     private val range = window.map { DateRanges.of(it.period, it.anchor) }
+
+    private val recordTypeFlow = MutableStateFlow(RecordType.EXPENSE)
+    val recordType: LiveData<RecordType> = recordTypeFlow.asLiveData()
 
     /** Which of Day / Week / Month is selected. */
     val period: LiveData<Period> = window.map { it.period }.asLiveData()
@@ -40,36 +36,24 @@ class AnalysisViewModel(app: Application) : AndroidViewModel(app) {
     val rangeLabel: LiveData<String> = range.map { it.label }.asLiveData()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val expenseFlow = range.flatMapLatest { repo.observeTotal(RecordType.EXPENSE, it) }
+    val activeTotal: LiveData<Double> = combine(range, recordTypeFlow) { r, t -> r to t }
+        .flatMapLatest { (r, t) -> repo.observeTotal(t, r) }
+        .asLiveData()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val incomeFlow = range.flatMapLatest { repo.observeTotal(RecordType.INCOME, it) }
+    val activeBreakdown: LiveData<List<CategoryShare>> = combine(range, recordTypeFlow) { r, t -> r to t }
+        .flatMapLatest { (r, t) -> repo.observeBreakdown(t, r) }
+        .asLiveData()
 
-    /** EXPENSE  Ksh 17,800 */
-    val expenseTotal: LiveData<Double> = expenseFlow.asLiveData()
-
-    /** INCOME  Ksh 23,000 */
-    val incomeTotal: LiveData<Double> = incomeFlow.asLiveData()
-
-    /** TOTAL  Ksh 5,200  (income minus expense, can be negative) */
-    val netTotal: LiveData<Double> = combine(incomeFlow, expenseFlow) { income, expense -> income - expense }.asLiveData()
-
-    /** Expenses tab: donut + rows. Each item has name, iconKey, total, percent. */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val expenseBreakdown: LiveData<List<CategoryShare>> =
-        range.flatMapLatest { repo.observeBreakdown(RecordType.EXPENSE, it) }.asLiveData()
-
-    /** Income tab: donut + rows. */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val incomeBreakdown: LiveData<List<CategoryShare>> =
-        range.flatMapLatest { repo.observeBreakdown(RecordType.INCOME, it) }.asLiveData()
-
-    /** Accounts tab: one entry per account with income, expense and net. */
     @OptIn(ExperimentalCoroutinesApi::class)
     val accountFlows: LiveData<List<AccountFlow>> =
         range.flatMapLatest { repo.observeAccountFlows(it) }.asLiveData()
 
     // ----- controls
+
+    fun setRecordType(type: RecordType) {
+        recordTypeFlow.value = type
+    }
 
     /** The Day / Week / Month pills. Keeps the date you were looking at. */
     fun setPeriod(newPeriod: Period) {

@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.group.pockit.data.PockitRepository
 import com.group.pockit.data.Session
+import com.group.pockit.data.model.BudgetOverview
 import com.group.pockit.data.model.RecordItem
 import com.group.pockit.data.model.RecordType
 import com.group.pockit.util.DateRanges
@@ -15,6 +16,7 @@ import com.group.pockit.util.Period
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -51,14 +53,11 @@ class DashboardViewModel(app: Application) : AndroidViewModel(app) {
     private var currentType = "Expense"
     private var currentPeriod = Period.MONTH
 
-    private val monthlyLimit = 11500.0
-
     val greetingName: String get() = Session.displayName
 
     init {
         viewModelScope.launch {
             repo.ensureDefaultAccounts()
-            repo.seedDemoData()
         }
         setupLiveDataSources()
     }
@@ -75,7 +74,7 @@ class DashboardViewModel(app: Application) : AndroidViewModel(app) {
 
     fun loadDemoData() {
         viewModelScope.launch {
-            repo.seedDemoData()
+            repo.forceSeedDemoData()
         }
     }
 
@@ -84,44 +83,50 @@ class DashboardViewModel(app: Application) : AndroidViewModel(app) {
         val incomeLive = repo.observeTotal(RecordType.INCOME, range).asLiveData()
         val expenseLive = repo.observeTotal(RecordType.EXPENSE, range).asLiveData()
         val recentLive = repo.observeRecent(50).asLiveData()
+        val budgetLive = repo.observeBudget(YearMonth.now()).asLiveData()
 
         _state.removeSource(incomeLive)
         _state.removeSource(expenseLive)
         _state.removeSource(recentLive)
+        _state.removeSource(budgetLive)
 
-        _state.addSource(incomeLive) { income ->
-            val expense = expenseLive.value ?: 0.0
-            val inc = income ?: 0.0
-            val recentItems = recentLive.value ?: emptyList()
-            updateState(inc, expense, recentItems)
-        }
-        _state.addSource(expenseLive) { expense ->
-            val income = incomeLive.value ?: 0.0
-            val exp = expense ?: 0.0
-            val recentItems = recentLive.value ?: emptyList()
-            updateState(income, exp, recentItems)
-        }
-        _state.addSource(recentLive) { recentItems ->
+        val update = {
             val income = incomeLive.value ?: 0.0
             val expense = expenseLive.value ?: 0.0
-            updateState(income, expense, recentItems)
+            val items = recentLive.value ?: emptyList()
+            val budget = budgetLive.value
+            updateState(income, expense, items, budget)
         }
+
+        _state.addSource(incomeLive) { update() }
+        _state.addSource(expenseLive) { update() }
+        _state.addSource(recentLive) { update() }
+        _state.addSource(budgetLive) { update() }
     }
 
-    private fun updateState(totalIncome: Double, totalSpent: Double, items: List<RecordItem>) {
+    private fun updateState(
+        totalIncome: Double,
+        totalSpent: Double,
+        items: List<RecordItem>,
+        budget: BudgetOverview?
+    ) {
+        val budgetLimit = budget?.totalLimit ?: 0.0
+
         val overview = if (currentType == "Expense") {
+            val limit = if (budgetLimit > 0) budgetLimit else 0.0
+            val remaining = if (limit > 0) limit - totalSpent else 0.0
             Overview(
-                remaining = monthlyLimit - totalSpent,
+                remaining = remaining,
                 spent = totalSpent,
-                limit = monthlyLimit,
-                over = totalSpent > monthlyLimit
+                limit = limit,
+                over = limit > 0 && totalSpent > limit
             )
         } else {
             Overview(
                 remaining = totalIncome - totalSpent,
                 spent = totalSpent,
                 limit = totalIncome,
-                over = totalSpent > totalIncome
+                over = totalSpent > totalIncome && totalIncome > 0
             )
         }
 

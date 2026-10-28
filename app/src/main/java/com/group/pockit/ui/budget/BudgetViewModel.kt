@@ -60,4 +60,9 @@ class BudgetViewModel(app: Application) : AndroidViewModel(app) {
     fun removeBudget(categoryId: Long) {
         viewModelScope.launch { repo.removeBudget(month.value, categoryId) }
     }
+
+    /** Creates a new custom expense category and sets its budget for the current month. */
+    fun addCategory(name: String, limit: Double, onResult: (Boolean) -> Unit = {}) {
+        viewModelScope.launch { onResult(repo.addBudgetCategory(name, limit)) }
+    }
 }

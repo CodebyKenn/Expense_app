@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         // Connect your bottom navigation bar automatically to your navigation maps
         binding.bottomNav.setupWithNavController(navController)
+        binding.bottomNav.isItemActiveIndicatorEnabled = false
 
         // Hide bottom nav on splash, welcome, login, and register screens
         navController.addOnDestinationChangedListener { _, destination, _ ->

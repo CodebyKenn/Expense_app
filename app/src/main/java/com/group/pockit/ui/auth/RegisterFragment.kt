@@ -40,7 +40,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 password != confirmPassword ->
                     etConfirmPassword.error = "Passwords do not match"
                 else -> {
-                    // Save user display name in Session
+                    // Save user userId and display name in Session
+                    Session.userId = email.lowercase().trim()
                     Session.displayName = name
                     Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_register_to_dashboard)

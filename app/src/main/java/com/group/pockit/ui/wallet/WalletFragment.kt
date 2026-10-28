@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.group.pockit.R
 import com.group.pockit.data.model.AccountBalance
 import com.group.pockit.ui.accounts.AccountsViewModel
+import com.group.pockit.util.SuccessDialog
 
 private fun ksh(v: Double) = String.format("%,.0f", v)
 
@@ -39,10 +40,12 @@ class WalletFragment : Fragment() {
         val textTotalBalance = view.findViewById<TextView>(R.id.textTotalBalance)
         val rvAccounts = view.findViewById<RecyclerView>(R.id.rvAccounts)
         val addAccountButton = view.findViewById<View>(R.id.buttonAddAccount)
+        val loadDummyDataButton = view.findViewById<View>(R.id.buttonLoadDummyData)
+        val resetDataButton = view.findViewById<View>(R.id.buttonResetData)
 
         rvAccounts.layoutManager = LinearLayoutManager(requireContext())
         adapter = WalletAdapter(
-            onEdit = { account -> showRenameDialog(account) }
+            onEdit = { account -> showEditAccountDialog(account) }
         )
         rvAccounts.adapter = adapter
 
@@ -56,6 +59,33 @@ class WalletFragment : Fragment() {
 
         addAccountButton.setOnClickListener {
             showAddAccountDialog()
+        }
+
+        loadDummyDataButton.setOnClickListener {
+            viewModel.loadDemoData {
+                SuccessDialog.show(
+                    requireContext(),
+                    title = "Dummy Data Loaded",
+                    message = "Sample accounts, transactions, and budgets have been loaded successfully."
+                )
+            }
+        }
+
+        resetDataButton.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Reset All Data")
+                .setMessage("Are you sure you want to reset all data? This will clear all transactions, custom accounts, and budgets, restoring default accounts with KSh 0 balance.")
+                .setPositiveButton("Reset") { _, _ ->
+                    viewModel.resetData {
+                        SuccessDialog.show(
+                            requireContext(),
+                            title = "Data Reset",
+                            message = "All transactions and custom data have been cleared. Default accounts reset to KSh 0."
+                        )
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
@@ -82,8 +112,15 @@ class WalletFragment : Fragment() {
                 val balance = inputBalance.text.toString().toDoubleOrNull() ?: 0.0
                 if (name.isNotEmpty()) {
                     viewModel.addAccount(name, balance) { success ->
-                        if (success) Toast.makeText(requireContext(), "Account added", Toast.LENGTH_SHORT).show()
-                        else Toast.makeText(requireContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                        if (success) {
+                            SuccessDialog.show(
+                                requireContext(),
+                                title = "Account Created",
+                                message = "Account '$name' created successfully with opening balance KSh ${ksh(balance)}."
+                            )
+                        } else {
+                            Toast.makeText(requireContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), "Enter a valid name", Toast.LENGTH_SHORT).show()
@@ -93,18 +130,38 @@ class WalletFragment : Fragment() {
             .show()
     }
 
-    private fun showRenameDialog(account: AccountBalance) {
-        val input = EditText(requireContext()).apply {
+    private fun showEditAccountDialog(account: AccountBalance) {
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 20, 40, 20)
+        }
+        val inputName = EditText(requireContext()).apply {
+            hint = "Account Name"
             setText(account.name)
         }
+        val inputBalance = EditText(requireContext()).apply {
+            hint = "Account Balance in KSh"
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            setText(account.balance.toInt().toString())
+        }
+        layout.addView(inputName)
+        layout.addView(inputBalance)
+
         AlertDialog.Builder(requireContext())
             .setTitle("Manage Account")
-            .setView(input)
-            .setPositiveButton("Rename") { _, _ ->
-                val newName = input.text.toString().trim()
+            .setView(layout)
+            .setPositiveButton("Save") { _, _ ->
+                val newName = inputName.text.toString().trim()
+                val newBalance = inputBalance.text.toString().toDoubleOrNull() ?: account.balance
                 if (newName.isNotEmpty()) {
-                    viewModel.rename(account.id, newName) { success ->
-                        if (success) Toast.makeText(requireContext(), "Account renamed", Toast.LENGTH_SHORT).show()
+                    viewModel.updateAccount(account.id, newName, newBalance) { success ->
+                        if (success) {
+                            SuccessDialog.show(
+                                requireContext(),
+                                title = "Account Updated",
+                                message = "Account '$newName' updated with balance KSh ${ksh(newBalance)}."
+                            )
+                        }
                     }
                 }
             }

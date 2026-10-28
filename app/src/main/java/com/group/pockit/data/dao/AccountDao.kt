@@ -25,8 +25,14 @@ interface AccountDao {
     @Query("UPDATE accounts SET name = :name WHERE id = :id AND userId = :userId")
     suspend fun rename(id: Long, userId: String, name: String): Int
 
+    @Query("UPDATE accounts SET name = :name, openingBalance = :openingBalance WHERE id = :id AND userId = :userId")
+    suspend fun updateAccount(id: Long, userId: String, name: String, openingBalance: Double): Int
+
     @Query("DELETE FROM accounts WHERE id = :id AND userId = :userId")
     suspend fun delete(id: Long, userId: String): Int
+
+    @Query("DELETE FROM accounts WHERE userId = :userId")
+    suspend fun deleteAll(userId: String): Int
 
     /**
      * Every account with its CURRENT balance:

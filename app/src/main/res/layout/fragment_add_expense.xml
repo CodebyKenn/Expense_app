@@ -27,11 +27,16 @@
             android:layout_marginBottom="22dp">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:src="@drawable/ic_pockit"
                 android:contentDescription="Pockit"
                 android:scaleType="fitCenter" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/buttonCancel"
@@ -40,9 +45,8 @@
                 android:gravity="center"
                 android:text="@string/cancel"
                 android:textColor="#7651A8"
-                android:textSize="13sp"
-                android:paddingStart="150dp"
-                android:paddingEnd="5dp" />
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp" />
 
             <TextView
                 android:id="@+id/buttonSaveExpense"
@@ -51,10 +55,11 @@
                 android:gravity="center"
                 android:text="@string/save_expense"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:background="@drawable/bg_button_purple"
-                android:paddingHorizontal="16dp" />
+                android:paddingHorizontal="16dp"
+                android:layout_marginStart="12dp" />
 
         </LinearLayout>
 
@@ -105,7 +110,7 @@
 
         </LinearLayout>
 
-        <!-- ACCOUNT AND CATEGORY -->
+        <!-- ACCOUNT AND CATEGORY / TO ACCOUNT -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -123,6 +128,7 @@
                 android:layout_marginEnd="7dp">
 
                 <TextView
+                    android:id="@+id/tvAccountLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/account_label"
@@ -136,13 +142,13 @@
                     android:layout_height="50dp"
                     android:background="@drawable/bg_key_white"
                     android:paddingStart="12dp"
-                    android:paddingEnd="8dp"
-                    android:entries="@array/expense_accounts" />
+                    android:paddingEnd="8dp" />
 
             </LinearLayout>
 
             <!-- CATEGORY -->
             <LinearLayout
+                android:id="@+id/layoutCategory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -163,8 +169,35 @@
                     android:layout_height="50dp"
                     android:background="@drawable/bg_key_white"
                     android:paddingStart="12dp"
-                    android:paddingEnd="8dp"
-                    android:entries="@array/expense_categories" />
+                    android:paddingEnd="8dp" />
+
+            </LinearLayout>
+
+            <!-- TO ACCOUNT (TRANSFER) -->
+            <LinearLayout
+                android:id="@+id/layoutToAccount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="7dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To Account"
+                    android:textColor="#141214"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="6dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerToAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_key_white"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp" />
 
             </LinearLayout>
 
@@ -434,6 +467,23 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <!-- BOTTOM HORIZONTAL SAVE BUTTON -->
+        <Button
+            android:id="@+id/buttonSaveExpenseBottom"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_button_purple"
+            android:backgroundTint="@null"
+            android:text="SAVE TRANSACTION"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
 
     </LinearLayout>
 

@@ -77,6 +77,12 @@ class PockitRepository private constructor(db: AppDatabase) {
         return accountDao.rename(id, userId, clean) > 0
     }
 
+    suspend fun updateAccount(id: Long, newName: String, openingBalance: Double): Boolean {
+        val clean = newName.trim()
+        if (clean.isEmpty() || !openingBalance.isFinite()) return false
+        return accountDao.updateAccount(id, userId, clean, openingBalance) > 0
+    }
+
     /** Also deletes every record of that account (and transfers into it). */
     suspend fun deleteAccount(id: Long) {
         accountDao.delete(id, userId)
@@ -130,7 +136,17 @@ class PockitRepository private constructor(db: AppDatabase) {
 
     /** Donut chart data with each category's share in percent (0 to 100). */
     fun observeBreakdown(type: RecordType, range: DateRange): Flow<List<CategoryShare>> =
-        recordDao.observeTotalsByCategory(userId, type, range.from, range.to).map { rows ->
+        if (type == RecordType.TRANSFER) observeTransferBreakdown(range)
+        else recordDao.observeTotalsByCategory(userId, type, range.from, range.to).map { rows ->
+            val sum = rows.sumOf { it.total }
+            rows.map {
+                val percent = if (sum > 0.0) Math.round(it.total / sum * 100).toInt() else 0
+                CategoryShare(it.categoryId, it.name, it.iconKey, it.total, percent)
+            }
+        }
+
+    fun observeTransferBreakdown(range: DateRange): Flow<List<CategoryShare>> =
+        recordDao.observeTransferTotals(userId, range.from, range.to).map { rows ->
             val sum = rows.sumOf { it.total }
             rows.map {
                 val percent = if (sum > 0.0) Math.round(it.total / sum * 100).toInt() else 0
@@ -162,7 +178,28 @@ class PockitRepository private constructor(db: AppDatabase) {
         budgetDao.remove(userId, month.toString(), categoryId)
     }
 
+    suspend fun addBudgetCategory(name: String, limitAmount: Double): Boolean {
+        val clean = name.trim()
+        if (clean.isEmpty() || !limitAmount.isFinite() || limitAmount <= 0.0) return false
+        val catId = categoryDao.insert(Category(name = clean, type = RecordType.EXPENSE, iconKey = "other"))
+        return setBudget(YearMonth.now(), catId, limitAmount)
+    }
+
     // ------------------------------------------------------------ demo data
+
+    /** Deletes all records, budgets, and custom accounts for the current user, then recreates default accounts with 0 balance. */
+    suspend fun clearUserData() {
+        recordDao.deleteAll(userId)
+        budgetDao.deleteAll(userId)
+        accountDao.deleteAll(userId)
+        ensureDefaultAccounts()
+    }
+
+    /** Clears all current data and populates sample transactions and budgets. */
+    suspend fun forceSeedDemoData() {
+        clearUserData()
+        seedDemoData()
+    }
 
     /**
      * Fills the app with sample data that matches the design screens, so the Dashboard,

@@ -34,6 +34,9 @@ interface RecordDao {
     @Query("SELECT COUNT(*) FROM records WHERE userId = :userId")
     suspend fun count(userId: String): Int
 
+    @Query("DELETE FROM records WHERE userId = :userId")
+    suspend fun deleteAll(userId: String): Int
+
     // ---------------------------------------------------------------- lists
 
     /** Dashboard "Recent transaction" list: newest first. */
@@ -112,6 +115,19 @@ interface RecordDao {
         """
     )
     fun observeTotalsByCategory(userId: String, type: RecordType, fromTime: Long, toTime: Long): Flow<List<CategoryTotal>>
+
+    /** Transfer breakdown by destination account. */
+    @Query(
+        """
+        SELECT ta.id AS categoryId, ('To ' || ta.name) AS name, 'wallet' AS iconKey, SUM(r.amount) AS total
+        FROM records r
+        JOIN accounts ta ON ta.id = r.toAccountId
+        WHERE r.userId = :userId AND r.type = 'TRANSFER' AND r.timestamp >= :fromTime AND r.timestamp < :toTime
+        GROUP BY ta.id
+        ORDER BY total DESC
+        """
+    )
+    fun observeTransferTotals(userId: String, fromTime: Long, toTime: Long): Flow<List<CategoryTotal>>
 
     /**
      * "Accounts" analysis tab: income and expense per account in a window.

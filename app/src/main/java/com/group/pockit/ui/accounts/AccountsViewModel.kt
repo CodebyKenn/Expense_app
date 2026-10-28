@@ -34,8 +34,29 @@ class AccountsViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { onResult(repo.renameAccount(accountId, newName)) }
     }
 
+    /** "..." menu > Edit Name & Balance. */
+    fun updateAccount(accountId: Long, newName: String, openingBalance: Double, onResult: (Boolean) -> Unit = {}) {
+        viewModelScope.launch { onResult(repo.updateAccount(accountId, newName, openingBalance)) }
+    }
+
     /** "..." menu > Delete. Warning: also deletes that account's records. Ask the user to confirm first. */
     fun delete(accountId: Long) {
         viewModelScope.launch { repo.deleteAccount(accountId) }
+    }
+
+    /** Clears all user transactions, budgets, custom accounts and resets default accounts. */
+    fun resetData(onComplete: () -> Unit = {}) {
+        viewModelScope.launch {
+            repo.clearUserData()
+            onComplete()
+        }
+    }
+
+    /** Clears existing data and loads sample dummy data. */
+    fun loadDemoData(onComplete: () -> Unit = {}) {
+        viewModelScope.launch {
+            repo.forceSeedDemoData()
+            onComplete()
+        }
     }
 }

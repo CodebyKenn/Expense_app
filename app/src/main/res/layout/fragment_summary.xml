@@ -110,8 +110,54 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Expense total -->
+        <!-- TYPE SELECTOR TABS: Expense / Income / Transfer -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_round_purple"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/tabExpense"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Expense"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tabIncome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Income"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tabTransfer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Transfer"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Type Heading & Total -->
         <TextView
+            android:id="@+id/tvTypeHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -125,7 +171,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/expense_red"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <!-- Donut + legend -->
@@ -135,7 +181,6 @@
             android:layout_marginTop="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
 
             <com.group.pockit.ui.dashboard.DonutChartView
                 android:id="@+id/donut"
@@ -157,7 +202,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="No spending recorded for this period."
+            android:text="No transactions recorded for this period."
             android:textColor="@color/p2_gray"
             android:visibility="gone" />
 

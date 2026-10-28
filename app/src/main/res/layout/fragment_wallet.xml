@@ -84,12 +84,44 @@
             android:layout_width="260dp"
             android:layout_height="52dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/bg_wallet_add_account"
             android:backgroundTint="@null"
             android:text="ADD NEW ACCOUNT"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
+
+        <!-- LOAD DUMMY DATA -->
+        <Button
+            android:id="@+id/buttonLoadDummyData"
+            android:layout_width="260dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_button_outline"
+            android:backgroundTint="@null"
+            android:text="LOAD DUMMY DATA"
+            android:textAllCaps="false"
+            android:textColor="#4E285E"
+            android:textSize="14sp"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
+
+        <!-- RESET DATA -->
+        <Button
+            android:id="@+id/buttonResetData"
+            android:layout_width="260dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_button_outline"
+            android:backgroundTint="@null"
+            android:text="RESET / CLEAR DATA"
+            android:textAllCaps="false"
+            android:textColor="#E8112D"
             android:textSize="14sp"
             android:stateListAnimator="@null"
             android:elevation="0dp" />

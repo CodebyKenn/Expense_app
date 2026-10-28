@@ -31,7 +31,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     etEmail.error = "Enter a valid email"
                 password.isEmpty() -> etPassword.error = "Enter your password"
                 else -> {
-                    // Set display name from email username
+                    // Set session userId and display name from email
+                    Session.userId = email.lowercase().trim()
                     val userPrefix = email.substringBefore("@")
                     Session.displayName = userPrefix.replaceFirstChar { it.uppercase() }
                     findNavController().navigate(R.id.action_login_to_dashboard)

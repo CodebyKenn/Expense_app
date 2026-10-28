@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.group.pockit.R
 import com.group.pockit.databinding.FragmentBudgetBinding
 import com.group.pockit.data.model.BudgetStatus
+import com.group.pockit.util.SuccessDialog
 import kotlin.math.roundToInt
 
 private fun ksh(v: Double) = String.format("%,.0f", v)
@@ -49,7 +51,13 @@ class BudgetFragment : Fragment() {
         adapter = BudgetAdapter(emptyList()) { categoryId, categoryName ->
             askAmount("Monthly limit for $categoryName") { amount ->
                 viewModel.setBudget(categoryId, amount) { success ->
-                    if (success) Toast.makeText(requireContext(), "Budget saved", Toast.LENGTH_SHORT).show()
+                    if (success) {
+                        SuccessDialog.show(
+                            requireContext(),
+                            title = "Budget Saved",
+                            message = "Monthly limit for $categoryName set to KSh ${ksh(amount)}."
+                        )
+                    }
                 }
             }
         }
@@ -79,6 +87,51 @@ class BudgetFragment : Fragment() {
 
         b.btnPrev.setOnClickListener { viewModel.previousMonth() }
         b.btnNext.setOnClickListener { viewModel.nextMonth() }
+
+        b.buttonAddCategory.setOnClickListener {
+            showAddCategoryDialog()
+        }
+    }
+
+    private fun showAddCategoryDialog() {
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 20, 40, 20)
+        }
+        val inputName = EditText(requireContext()).apply {
+            hint = "Category Name (e.g., Subscriptions)"
+        }
+        val inputLimit = EditText(requireContext()).apply {
+            hint = "Monthly Budget Limit in KSh"
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+        layout.addView(inputName)
+        layout.addView(inputLimit)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Add Budget Category")
+            .setView(layout)
+            .setPositiveButton("Add") { _, _ ->
+                val name = inputName.text.toString().trim()
+                val limit = inputLimit.text.toString().toDoubleOrNull() ?: 0.0
+                if (name.isNotEmpty() && limit > 0) {
+                    viewModel.addCategory(name, limit) { success ->
+                        if (success) {
+                            SuccessDialog.show(
+                                requireContext(),
+                                title = "Category Created",
+                                message = "Budget category '$name' created with a limit of KSh ${ksh(limit)}."
+                            )
+                        } else {
+                            Toast.makeText(requireContext(), "Enter valid details", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Enter valid name and limit above 0", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun askAmount(title: String, onSave: (Double) -> Unit) {
