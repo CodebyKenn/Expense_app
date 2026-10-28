@@ -56,7 +56,12 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.group.pockit.ui.dashboard.DashboardFragment"
-        android:label="Dashboard" />
+        android:label="Dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/summaryFragment"
