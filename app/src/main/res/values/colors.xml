@@ -2,10 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
-    <color name="cream">#FFF8F1DE</color>
-    <color name="purple_dark">#FF4B2C5E</color>
-    <color name="purple_text">#FF6B2D8C</color>
+    <color name="cream">#FFF8F1DC</color>
+    <color name="purple_dark">#FF46044B</color>
+    <color name="purple_text">#FF46044B</color>
     <color name="lavender">#FFE3D3F2</color>
     <color name="gradient_top">#FF7A3A8F</color>
     <color name="gradient_bottom">#FFF2D9F0</color>

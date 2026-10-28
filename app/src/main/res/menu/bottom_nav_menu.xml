@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  
+
+    <item
+        android:id="@+id/dashboardFragment"
+        android:icon="@drawable/ic_nav_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/summaryFragment"
+        android:icon="@drawable/ic_nav_summary"
+        android:title="Summary" />
+
+    <item
+        android:id="@+id/addExpenseFragment"
+        android:icon="@drawable/ic_nav_add"
+        android:title="Add" />
+
+    <item
+        android:id="@+id/budgetFragment"
+        android:icon="@drawable/ic_nav_budget"
+        android:title="Budget" />
+
+    <item
+        android:id="@+id/expenseListFragment"
+        android:icon="@drawable/ic_nav_expenses"
+        android:title="Expenses" />
+
+
+
+
 </menu>
