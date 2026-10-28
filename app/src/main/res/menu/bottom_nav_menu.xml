@@ -21,9 +21,9 @@
         android:title="Budget" />
 
     <item
-        android:id="@+id/expenseListFragment"
+        android:id="@+id/walletFragment"
         android:icon="@drawable/ic_nav_expenses"
-        android:title="Expenses" />
+        android:title="Wallet" />
 
 
 

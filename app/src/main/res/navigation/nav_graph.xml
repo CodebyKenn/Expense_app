@@ -80,4 +80,9 @@
         android:name="com.group.pockit.ui.expenses.ExpenseListFragment"
         android:label="Expenses" />
 
+    <fragment
+        android:id="@+id/walletFragment"
+        android:name="com.group.pockit.ui.wallet.WalletFragment"
+        android:label="Wallet" />
+
 </navigation>
