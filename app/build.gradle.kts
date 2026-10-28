@@ -1,6 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
 }
+
+
+
+
+
 
 android {
     namespace = "com.group.pockit"
@@ -29,6 +35,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -42,5 +52,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)         // Changed from room-compiler to room.compiler
+    implementation(libs.lifecycle.viewmodel) // Changed from lifecycle-viewmodel to lifecycle.viewmodel
+    implementation(libs.lifecycle.livedata)  // Changed from lifecycle-livedata to lifecycle.livedata
 
 }
