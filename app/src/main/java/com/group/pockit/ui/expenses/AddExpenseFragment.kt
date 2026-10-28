@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.group.pockit.R
@@ -24,16 +25,22 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         val amountInput = view.findViewById<EditText>(R.id.inputAmount)
         val categorySpinner = view.findViewById<Spinner>(R.id.spinnerCategory)
         val accountSpinner = view.findViewById<Spinner>(R.id.spinnerAccount)
-        val noteInput = view.findViewById<EditText>(R.id.inputNote)
         val dateButton = view.findViewById<Button>(R.id.buttonDate)
-        val saveButton = view.findViewById<Button>(R.id.buttonSaveExpense)
+        val timeText = view.findViewById<TextView>(R.id.textTime)
+        val saveButton = view.findViewById<TextView>(R.id.buttonSaveExpense)
 
         val incomeButton = view.findViewById<Button>(R.id.buttonIncome)
         val expenseButton = view.findViewById<Button>(R.id.buttonExpense)
         val transferButton = view.findViewById<Button>(R.id.buttonTransfer)
-        val cancelButton = view.findViewById<Button>(R.id.buttonCancel)
+        val cancelButton = view.findViewById<TextView>(R.id.buttonCancel)
+
+        amountInput.showSoftInputOnFocus = false
+
+        setupKeypad(view, amountInput)
 
         updateDateButton(dateButton)
+        updateTimeText(timeText)
+
         updateTransactionType(
             "Expense",
             incomeButton,
@@ -44,19 +51,31 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         incomeButton.setOnClickListener {
             updateTransactionType(
-                "Income", incomeButton, expenseButton, transferButton, categorySpinner
+                "Income",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
         expenseButton.setOnClickListener {
             updateTransactionType(
-                "Expense", incomeButton, expenseButton, transferButton, categorySpinner
+                "Expense",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
         transferButton.setOnClickListener {
             updateTransactionType(
-                "Transfer", incomeButton, expenseButton, transferButton, categorySpinner
+                "Transfer",
+                incomeButton,
+                expenseButton,
+                transferButton,
+                categorySpinner
             )
         }
 
@@ -77,10 +96,16 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         cancelButton.setOnClickListener {
             amountInput.text.clear()
-            noteInput.text.clear()
             selectedDate = Calendar.getInstance()
+
             updateDateButton(dateButton)
-            Toast.makeText(requireContext(), "Form cleared", Toast.LENGTH_SHORT).show()
+            updateTimeText(timeText)
+
+            Toast.makeText(
+                requireContext(),
+                "Form cleared",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         saveButton.setOnClickListener {
@@ -94,9 +119,16 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
             val category = categorySpinner.selectedItem?.toString().orEmpty()
             val account = accountSpinner.selectedItem?.toString().orEmpty()
-            val note = noteInput.text.toString().trim()
-            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                .format(selectedDate.time)
+
+            val date = SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            ).format(selectedDate.time)
+
+            val time = SimpleDateFormat(
+                "HH:mm",
+                Locale.getDefault()
+            ).format(Calendar.getInstance().time)
 
             if (category.isBlank() || account.isBlank()) {
                 Toast.makeText(
@@ -108,12 +140,58 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             }
 
             val message = "${getString(R.string.transaction_validated)}: " +
-                    "$transactionType, $account, $category, KSh $amount, $date" +
-                    if (note.isNotBlank()) ", $note" else ""
+                    "$transactionType, $account, $category, KSh $amount, $date $time"
 
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireContext(),
+                message,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
-            // Permanent saving will be added when the database/repository is connected.
+    private fun setupKeypad(view: View, amountInput: EditText) {
+
+        val numberButtons = listOf(
+            R.id.key0,
+            R.id.key1,
+            R.id.key2,
+            R.id.key3,
+            R.id.key4,
+            R.id.key5,
+            R.id.key6,
+            R.id.key7,
+            R.id.key8,
+            R.id.key9
+        )
+
+        numberButtons.forEach { id ->
+            view.findViewById<Button>(id).setOnClickListener { button ->
+                amountInput.append((button as Button).text.toString())
+            }
+        }
+
+        view.findViewById<Button>(R.id.keyDecimal).setOnClickListener {
+            val currentText = amountInput.text.toString()
+
+            if (!currentText.contains(".")) {
+                if (currentText.isEmpty()) {
+                    amountInput.append("0.")
+                } else {
+                    amountInput.append(".")
+                }
+            }
+        }
+
+        view.findViewById<Button>(R.id.keyBackspace).setOnClickListener {
+            val currentText = amountInput.text.toString()
+
+            if (currentText.isNotEmpty()) {
+                amountInput.text.delete(
+                    currentText.length - 1,
+                    currentText.length
+                )
+            }
         }
     }
 
@@ -128,6 +206,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         val selectedColor = 0xFF4E285E.toInt()
         val unselectedColor = 0xFFE4D1F1.toInt()
+
         val selectedTextColor = 0xFFFFFFFF.toInt()
         val unselectedTextColor = 0xFF4E285E.toInt()
 
@@ -138,9 +217,18 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         )
 
         buttons.forEach { (button, buttonType) ->
+
             val selected = buttonType == type
-            button.setBackgroundColor(if (selected) selectedColor else unselectedColor)
-            button.setTextColor(if (selected) selectedTextColor else unselectedTextColor)
+
+            button.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(
+                    if (selected) selectedColor else unselectedColor
+                )
+            )
+
+            button.setTextColor(
+                if (selected) selectedTextColor else unselectedTextColor
+            )
         }
 
         val categories = when (type) {
@@ -149,15 +237,16 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             else -> R.array.expense_categories
         }
 
-        categorySpinner.setAdapter(
+        categorySpinner.adapter =
             android.widget.ArrayAdapter.createFromResource(
                 requireContext(),
                 categories,
                 android.R.layout.simple_spinner_item
             ).also {
-                it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                it.setDropDownViewResource(
+                    android.R.layout.simple_spinner_dropdown_item
+                )
             }
-        )
     }
 
     private fun updateDateButton(button: Button) {
@@ -165,5 +254,12 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             "dd MMM yyyy",
             Locale.getDefault()
         ).format(selectedDate.time)
+    }
+
+    private fun updateTimeText(textView: TextView) {
+        textView.text = SimpleDateFormat(
+            "HH:mm",
+            Locale.getDefault()
+        ).format(Calendar.getInstance().time)
     }
 }
