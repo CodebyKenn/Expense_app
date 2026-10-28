@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <action
+        android:id="@+id/action_global_logout"
+        app:destination="@id/welcomeFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.group.pockit.ui.auth.WelcomeFragment"
+        android:label="Welcome">
+        <action
+            android:id="@+id/action_welcome_to_login"
+            app:destination="@id/loginFragment" />
+            <action
+                android:id="@+id/action_welcome_to_register"
+                app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.group.pockit.ui.auth.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_login_to_dashboard"
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.group.pockit.ui.auth.RegisterFragment"
+        android:label="Register">
+        <action
+            android:id="@+id/action_register_to_dashboard"
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.group.pockit.ui.dashboard.DashboardFragment"
+        android:label="Dashboard" />
+
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.group.pockit.ui.dashboard.SummaryFragment"
+        android:label="Summary" />
+
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.group.pockit.ui.budget.BudgetFragment"
+        android:label="Budget" />
+
+
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.group.pockit.ui.expenses.AddExpenseFragment"
+        android:label="Add expense" />
+
+
+    <fragment
+        android:id="@+id/expenseListFragment"
+        android:name="com.group.pockit.ui.expenses.ExpenseListFragment"
+        android:label="Expenses" />
 
 </navigation>
